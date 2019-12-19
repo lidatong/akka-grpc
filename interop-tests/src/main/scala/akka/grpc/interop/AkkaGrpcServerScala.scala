@@ -5,23 +5,29 @@
 package akka.grpc.interop
 
 import java.io.FileInputStream
-import java.nio.file.{ Files, Paths }
+import java.nio.file.Files
+import java.nio.file.Paths
 import java.security.cert.CertificateFactory
 import java.security.spec.PKCS8EncodedKeySpec
-import java.security.{ KeyFactory, KeyStore, SecureRandom }
-
-import scala.concurrent.duration._
+import java.security.KeyFactory
+import java.security.KeyStore
+import java.security.SecureRandom
 
 import akka.actor.ActorSystem
-import akka.util.ByteString
 import akka.http.scaladsl.Http.ServerBinding
-import akka.http.scaladsl.model.{ HttpRequest, HttpResponse }
-import akka.http.scaladsl.{ Http2, HttpsConnectionContext }
+import akka.http.scaladsl.model.HttpRequest
+import akka.http.scaladsl.model.HttpResponse
+import akka.http.scaladsl.Http2
+import akka.http.scaladsl.HttpsConnectionContext
 import akka.stream.SystemMaterializer
+import akka.util.ByteString
 import io.grpc.internal.testing.TestUtils
-import javax.net.ssl.{ KeyManagerFactory, SSLContext }
+import javax.net.ssl.KeyManagerFactory
+import javax.net.ssl.SSLContext
 
-import scala.concurrent.{ Await, Future }
+import scala.concurrent.duration._
+import scala.concurrent.Await
+import scala.concurrent.Future
 
 /**
  * Glue code to start a gRPC server based on the akka-grpc Scala API to test against

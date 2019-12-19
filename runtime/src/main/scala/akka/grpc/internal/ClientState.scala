@@ -11,11 +11,13 @@ import akka.annotation.InternalApi
 import akka.annotation.InternalStableApi
 import akka.event.LoggingAdapter
 import akka.grpc.GrpcClientSettings
-import akka.stream.{ ActorMaterializer, Materializer }
+import akka.stream.ActorMaterializer
+import akka.stream.Materializer
 import io.grpc.ManagedChannel
 
 import scala.compat.java8.FutureConverters._
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.ExecutionContext
+import scala.concurrent.Future
 
 /**
  * INTERNAL API

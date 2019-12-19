@@ -6,23 +6,24 @@
 package example.myapp.helloworld
 
 import akka.actor.ActorSystem
-import akka.http.scaladsl.model.{ HttpRequest, HttpResponse }
-import akka.http.scaladsl.{ Http, HttpConnectionContext }
-import akka.stream.{ ActorMaterializer, Materializer }
+import akka.http.scaladsl.model.HttpRequest
+import akka.http.scaladsl.model.HttpResponse
+import akka.http.scaladsl.Http
+import akka.http.scaladsl.HttpConnectionContext
 import example.myapp.helloworld.grpc._
 
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.ExecutionContext
+import scala.concurrent.Future
 
 class PowerGreeterServer(system: ActorSystem) {
   def run(): Future[Http.ServerBinding] = {
     // Akka boot up code
     implicit val sys: ActorSystem = system
-    implicit val mat: Materializer = ActorMaterializer()
     implicit val ec: ExecutionContext = sys.dispatcher
 
     // Create service handlers
     val service: HttpRequest => Future[HttpResponse] =
-      GreeterServicePowerApiHandler(new PowerGreeterServiceImpl(mat))
+      GreeterServicePowerApiHandler(new PowerGreeterServiceImpl())
 
     // Bind service handler servers to localhost:8080/8081
     val binding = Http().bindAndHandleAsync(

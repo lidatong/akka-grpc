@@ -5,27 +5,31 @@
 package akka.grpc.scaladsl
 
 import akka.actor.ActorSystem
-import akka.grpc.internal.{ AbstractGrpcProtocol, GrpcProtocolNative, Gzip }
+import akka.grpc.internal.AbstractGrpcProtocol
+import akka.grpc.internal.GrpcProtocolNative
+import akka.grpc.internal.Gzip
 import akka.grpc.scaladsl.headers.`Message-Encoding`
-import akka.http.scaladsl.model.{ HttpEntity, HttpRequest }
-import akka.stream.ActorMaterializer
+import akka.http.scaladsl.model.HttpEntity
+import akka.http.scaladsl.model.HttpRequest
 import akka.stream.scaladsl.Sink
-import io.grpc.{ Status, StatusException }
-import io.grpc.testing.integration.messages.{ BoolValue, SimpleRequest }
+import io.grpc.testing.integration.messages.BoolValue
+import io.grpc.testing.integration.messages.SimpleRequest
 import io.grpc.testing.integration.test.TestService
+import io.grpc.Status
+import io.grpc.StatusException
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 
 import scala.collection.immutable
-import scala.concurrent.{ Await, Future }
 import scala.concurrent.duration._
+import scala.concurrent.Await
+import scala.concurrent.Future
 
 class GrpcMarshallingSpec extends AnyWordSpec with Matchers {
   "The scaladsl GrpcMarshalling" should {
     val message = SimpleRequest(responseCompressed = Some(BoolValue(true)))
     implicit val serializer = TestService.Serializers.SimpleRequestSerializer
     implicit val system = ActorSystem()
-    implicit val mat = ActorMaterializer()
     val awaitTimeout = 10.seconds
     val zippedBytes =
       AbstractGrpcProtocol.encodeFrameData(

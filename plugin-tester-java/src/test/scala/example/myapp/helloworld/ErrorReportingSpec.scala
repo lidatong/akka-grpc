@@ -10,7 +10,7 @@ import akka.http.scaladsl.Http
 import akka.http.scaladsl.model._
 import akka.http.scaladsl.model.HttpEntity.{ Chunked, LastChunk }
 import akka.http.scaladsl.model.headers.RawHeader
-import akka.stream.ActorMaterializer
+import akka.stream.Materializer
 import akka.stream.scaladsl.Sink
 import example.myapp.helloworld.grpc.{ GreeterService, GreeterServiceHandlerFactory }
 import io.grpc.Status
@@ -28,11 +28,12 @@ class ErrorReportingSpec extends AnyWordSpec with Matchers with ScalaFutures wit
   override implicit val patienceConfig = PatienceConfig(5.seconds, Span(100, org.scalatest.time.Millis))
 
   "A gRPC server" should {
-    implicit val mat = ActorMaterializer()
+    val mat = implicitly[Materializer]
 
     val handler = GreeterServiceHandlerFactory.create(new GreeterServiceImpl(mat), sys)
     val binding = {
-      import akka.http.javadsl.{ ConnectHttp, Http }
+      import akka.http.javadsl.ConnectHttp
+      import akka.http.javadsl.Http
 
       Http(sys).bindAndHandleAsync(handler, ConnectHttp.toHost("127.0.0.1", 0), mat).toCompletableFuture.get
     }

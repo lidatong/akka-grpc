@@ -162,7 +162,7 @@ final class ScalaClientStreamingRequestBuilder[I, O](
     NettyClientUtils.callOptionsWithDeadline(defaultOptions, settings)
 
   override def invoke(request: Source[I, NotUsed]): Future[O] =
-    invokeWithMetadata(request).map(_.value)(ExecutionContexts.sameThreadExecutionContext)
+    invokeWithMetadata(request).map(_.value)(ExecutionContexts.parasitic)
 
   override def invokeWithMetadata(source: Source[I, NotUsed]): Future[GrpcSingleResponse[O]] =
     channel.value match {
@@ -194,7 +194,7 @@ final class ScalaClientStreamingRequestBuilder[I, O](
               def trailers = metadata.trailers
               def getTrailers = metadata.getTrailers()
             }
-        }(ExecutionContexts.sameThreadExecutionContext)
+        }(ExecutionContexts.parasitic)
     }
 
   override def withHeaders(headers: MetadataImpl): ScalaClientStreamingRequestBuilder[I, O] =
@@ -299,7 +299,7 @@ final class ScalaServerStreamingRequestBuilder[I, O](
 
   override def invokeWithMetadata(source: I): Source[O, Future[GrpcResponseMetadata]] =
     Source
-      .fromFutureSource(channel.value match {
+      .futureSource(channel.value match {
         case Some(Success(c)) => invokeWithMetadata(source, c)
         case Some(Failure(t)) => Future.failed(t)
         case None             => channel.flatMap(c => invokeWithMetadata(source, c))
@@ -395,7 +395,7 @@ final class ScalaBidirectionalStreamingRequestBuilder[I, O](
 
   override def invokeWithMetadata(source: Source[I, NotUsed]): Source[O, Future[GrpcResponseMetadata]] =
     Source
-      .fromFutureSource(channel.value match {
+      .futureSource(channel.value match {
         case Some(Success(c)) => invokeWithMetadata(source, c)
         case Some(Failure(t)) => Future.failed(t)
         case None             => channel.flatMap(c => invokeWithMetadata(source, c))

@@ -10,7 +10,6 @@ package @service.packageName;
 import akka.grpc.internal.*;
 import akka.grpc.GrpcClientSettings;
 import akka.grpc.javadsl.AkkaGrpcClient;
-import akka.stream.ActorMaterializer;
 import akka.stream.Materializer;
 
 import io.grpc.ManagedChannel;
@@ -41,15 +40,12 @@ public abstract class @{service.name}Client extends @{service.name}ClientPowerAp
         this.ec = ec;
         this.clientState = new ClientState(
           settings,
-          // TODO #733 remove cast once we update Akka
-          akka.event.Logging$.MODULE$.apply(((ActorMaterializer)mat).system(), Default@{service.name}Client.class, akka.event.LogSource$.MODULE$.<Default@{service.name}Client>fromAnyClass()),
+          akka.event.Logging$.MODULE$.apply(mat.system(), Default@{service.name}Client.class, akka.event.LogSource$.MODULE$.<Default@{service.name}Client>fromAnyClass()),
           mat,
           ec);
         this.options = NettyClientUtils.callOptions(settings);
 
-        if (mat instanceof ActorMaterializer) {
-          ((ActorMaterializer) mat).system().getWhenTerminated().whenComplete((v, e) -> close());
-        }
+        mat.system().getWhenTerminated().whenComplete((v, e) -> close());
       }
 
   @for(method <- service.methods) {

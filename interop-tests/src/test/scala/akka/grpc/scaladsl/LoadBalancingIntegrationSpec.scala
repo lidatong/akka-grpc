@@ -6,26 +6,28 @@ package akka.grpc.scaladsl
 
 import java.net.InetSocketAddress
 
-import io.grpc.Status.Code
-import io.grpc.StatusRuntimeException
-
-import scala.concurrent.{ Await, Future }
-import scala.concurrent.duration._
-
 import akka.actor.ActorSystem
-import akka.discovery.{ Lookup, ServiceDiscovery }
-import akka.discovery.ServiceDiscovery.{ Resolved, ResolvedTarget }
+import akka.discovery.ServiceDiscovery.Resolved
+import akka.discovery.ServiceDiscovery.ResolvedTarget
+import akka.discovery.Lookup
+import akka.discovery.ServiceDiscovery
 import akka.grpc.GrpcClientSettings
 import akka.grpc.internal.ClientConnectionException
 import akka.http.scaladsl.Http
-
+import akka.stream.Materializer
+import akka.stream.SystemMaterializer
 import example.myapp.helloworld.grpc.helloworld._
-
-import org.scalatest.wordspec.AnyWordSpec
-import org.scalatest.matchers.should.Matchers
+import io.grpc.Status.Code
+import io.grpc.StatusRuntimeException
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.concurrent.ScalaFutures
+import org.scalatest.matchers.should.Matchers
 import org.scalatest.time.Span
+import org.scalatest.wordspec.AnyWordSpec
+
+import scala.concurrent.duration._
+import scala.concurrent.Await
+import scala.concurrent.Future
 
 final class MutableServiceDiscovery(targets: List[InetSocketAddress]) extends ServiceDiscovery {
   var services: Future[Resolved] = _
@@ -49,7 +51,7 @@ object MutableServiceDiscovery {
 
 class LoadBalancingIntegrationSpec extends AnyWordSpec with Matchers with BeforeAndAfterAll with ScalaFutures {
   implicit val system = ActorSystem("LoadBalancingIntegrationSpec")
-  implicit val mat = akka.stream.ActorMaterializer.create(system)
+  implicit val mat: Materializer = SystemMaterializer.get(system).materializer
   implicit val ec = system.dispatcher
 
   override implicit val patienceConfig = PatienceConfig(5.seconds, Span(10, org.scalatest.time.Millis))
@@ -78,7 +80,7 @@ class LoadBalancingIntegrationSpec extends AnyWordSpec with Matchers with Before
     }
 
     "re-discover endpoints on failure" in {
-      val service1materializer = akka.stream.ActorMaterializer.create(system)
+      val service1materializer: Materializer = SystemMaterializer.get(system).materializer
       val service1 = new CountingGreeterServiceImpl()
       val service2 = new CountingGreeterServiceImpl()
 

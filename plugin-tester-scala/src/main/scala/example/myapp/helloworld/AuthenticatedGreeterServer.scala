@@ -6,15 +6,20 @@
 package example.myapp.helloworld
 
 import akka.actor.ActorSystem
-import akka.http.scaladsl.model.{ HttpRequest, HttpResponse }
-import akka.http.scaladsl.server.{ Directive0, Route, RouteResult }
+import akka.http.scaladsl.model.HttpRequest
+import akka.http.scaladsl.model.HttpResponse
 import akka.http.scaladsl.server.Directives._
-import akka.http.scaladsl.{ Http, Http2, HttpConnectionContext }
-import akka.stream.{ ActorMaterializer, Materializer }
+import akka.http.scaladsl.server.Directive0
+import akka.http.scaladsl.server.Route
+import akka.http.scaladsl.server.RouteResult
+import akka.http.scaladsl.Http
+import akka.http.scaladsl.Http2
+import akka.http.scaladsl.HttpConnectionContext
 import com.typesafe.config.ConfigFactory
 import example.myapp.helloworld.grpc._
 
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.ExecutionContext
+import scala.concurrent.Future
 
 object AuthenticatedGreeterServer {
   def main(args: Array[String]): Unit = {
@@ -33,7 +38,6 @@ class AuthenticatedGreeterServer(system: ActorSystem) {
   def run(): Future[Http.ServerBinding] = {
     // Akka boot up code
     implicit val sys: ActorSystem = system
-    implicit val mat: Materializer = ActorMaterializer()
     implicit val ec: ExecutionContext = sys.dispatcher
 
     // Create service handlers

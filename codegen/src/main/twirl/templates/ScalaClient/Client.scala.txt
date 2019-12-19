@@ -20,7 +20,6 @@ import akka.grpc.internal.Marshaller
 import akka.grpc.internal.NettyClientUtils
 import akka.grpc.internal.ClientState
 
-import akka.stream.ActorMaterializer
 import akka.stream.Materializer
 
 @{
@@ -51,7 +50,7 @@ final class Default@{service.name}Client(settings: GrpcClientSettings)(implicit 
   import Default@{service.name}Client._
 
   private val options = NettyClientUtils.callOptions(settings)
-  private val clientState = new ClientState(settings, akka.event.Logging(mat.asInstanceOf[ActorMaterializer].system, this.getClass))
+  private val clientState = new ClientState(settings, akka.event.Logging(mat.system, this.getClass))
 
   @for(method <- service.methods) {
     private def @{method.name}RequestBuilder(channel:scala.concurrent.Future[ManagedChannel]) = {
