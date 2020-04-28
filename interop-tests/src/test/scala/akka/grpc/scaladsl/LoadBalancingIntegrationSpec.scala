@@ -80,7 +80,7 @@ class LoadBalancingIntegrationSpec extends AnyWordSpec with Matchers with Before
     }
 
     "re-discover endpoints on failure" in {
-      val service1materializer: Materializer = SystemMaterializer.get(system).materializer
+      val service1materializer: Materializer = Materializer.createMaterializer(system)
       val service1 = new CountingGreeterServiceImpl()
       val service2 = new CountingGreeterServiceImpl()
 
