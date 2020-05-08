@@ -12,3 +12,5 @@ Google in their [empty.proto](https://github.com/google/protobuf/blob/master/src
 It is recommended to introduce your own (empty) message types, however, as
 functionality may grow and this prepares you for adding additional (optional) fields
 over time.
+
+If you get import errors when trying to use `google.protobuf.Empty` (or google/protobuf types in general) try following [these instructions from Scalapb] (https://scalapb.github.io/faq.html#i-am-getting-import-was-not-found-or-had-errors) to resolve them.
